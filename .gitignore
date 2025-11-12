@@ -6,6 +6,13 @@ token.pickle
 .env
 *.env
 
+# JSON data / payloads (contains API calls, test data)
+payload.json
+call.json
+
+# Postman collections (optional - comment out if you want to share them)
+google_mcp_server.postman_collection.json
+
 # Python
 __pycache__/
 *.py[cod]
@@ -34,12 +41,18 @@ venv/
 env/
 ENV/
 
-# IDE
+# IDE / Editor files
 .vscode/
 .idea/
 *.swp
 *.swo
 .DS_Store
 
-# Logs
+# Logs and temporary files
 *.log
+*.tmp
+*.bak
+
+# Poetry / Pip cache
+poetry.lock
+pip-wheel-metadata/
