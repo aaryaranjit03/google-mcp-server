@@ -90,24 +90,33 @@ Tests cover:
 
 ## 💡 Usage Examples
 
-### With Claude Desktop
+### Using the MCP Server with Postman
 
-Add to `claude_desktop_config.json`:
-```json
-{
-  "mcpServers": {
-    "google-suite": {
-      "command": "python",
-      "args": ["/path/to/google_suite_server.py"]
-    }
-  }
-}
+This project exposes an MCP-compatible HTTP endpoint at:
+ ```
+http://127.0.0.1:8000/mcp
 ```
 
-Then ask Claude:
-- "Show me my calendar for this week"
-- "List my unread emails"
-- "Create a meeting tomorrow at 2pm"
+1. Open **Postman** → click **New** → **MCP** (or use the MCP sidebar).
+
+2. Enter the server endpoint:
+```
+http://127.0.0.1:8000/mcp
+```
+
+3. Click **Connect**. Postman will automatically:
+
+   - Negotiate an MCP session
+
+   - Open the streaming SSE connection
+
+   - Load all available tools
+
+4. Select any tool from the Tools tab and fill in the input fields.
+
+5. Press **Run** to execute the tool. Results will appear in the right panel, and streaming or multi-part outputs will show in real time.
+
+This provides a simple UI for invoking the server’s Google Calendar, Gmail, and other MCP tools without needing a custom client.
 
 ### Programmatic Usage
 ```python
@@ -139,3 +148,86 @@ All tests passing ✅
 - Calendar CRUD operations verified
 - Gmail operations verified
 
+## 🔧 MCP Redis Caching Layer (Feature Branch)
+
+### Redis Caching Layer & External Endpoint Configuration
+
+This branch adds support for querying external JSON endpoints with a 5-second timeout, backed by a Redis cache that stores responses for up to 5 minutes.
+
+Endpoints and cache settings are defined in a new file:
+```
+mcp_endpoints.json
+```
+
+Example entry:
+```json
+{
+  "mcp_services": {
+    "demo_info": {
+      "name": "demo_info",
+      "url": "https://httpbin.org/json",
+      "ttl_seconds": 300,
+      "cache": true
+    }
+  }
+}
+```
+
+### New MCP Tools
+
+This branch adds three tools accessible through Postman’s MCP UI:
+
+1. **get_mcp_endpoint_info**
+
+   Fetches JSON from the configured url using:
+
+   - 5-second request timeout
+
+   - Redis caching (if enabled)
+
+   - Stale-on-timeout fallback (returns cached data if the live request fails)
+
+   Input:
+   ```
+   endpoint_key: string
+   ```
+
+2. **invalidate_mcp_cache**
+
+   Invalidates the Redis entry for a specific configured endpoint.
+   ```
+   endpoint_key: string
+   ```
+
+3. **list_cached_keys**
+
+   Returns all Redis keys matching the pattern mcp:ep:*.
+
+### Running Locally
+
+Start Redis (e.g., using Docker):
+```bash
+docker run -d --name redis-server -p 6379:6379 redis:7
+```
+
+Run the server:
+```bash
+poetry run python google_suite_server_cache.py
+```
+
+The MCP endpoint remains:
+```
+http://127.0.0.1:8000/mcp
+```
+
+Postman will automatically load the new tools. You can test caching behavior by:
+
+- Calling `get_mcp_endpoint_info` once (fetch + cache)
+
+- Calling again (instant cache hit)
+
+- Invalidating with `invalidate_mcp_cache`
+
+- Calling again (re-fetch)
+
+- Using `slow_demo` to observe timeout + stale fallback
