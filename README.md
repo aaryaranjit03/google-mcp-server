@@ -90,24 +90,33 @@ Tests cover:
 
 ## 💡 Usage Examples
 
-### With Claude Desktop
+### Using the MCP Server with Postman
 
-Add to `claude_desktop_config.json`:
-```json
-{
-  "mcpServers": {
-    "google-suite": {
-      "command": "python",
-      "args": ["/path/to/google_suite_server.py"]
-    }
-  }
-}
+This project exposes an MCP-compatible HTTP endpoint at:
+ ```
+http://127.0.0.1:8000/mcp
 ```
 
-Then ask Claude:
-- "Show me my calendar for this week"
-- "List my unread emails"
-- "Create a meeting tomorrow at 2pm"
+1. Open **Postman** → click **New** → **MCP** (or use the MCP sidebar).
+
+2. Enter the server endpoint:
+```
+http://127.0.0.1:8000/mcp
+```
+
+3. Click **Connect**. Postman will automatically:
+
+   - Negotiate an MCP session
+
+   - Open the streaming SSE connection
+
+   - Load all available tools
+
+4. Select any tool from the Tools tab and fill in the input fields.
+
+5. Press **Run** to execute the tool. Results will appear in the right panel, and streaming or multi-part outputs will show in real time.
+
+This provides a simple UI for invoking the server’s Google Calendar, Gmail, and other MCP tools without needing a custom client.
 
 ### Programmatic Usage
 ```python
