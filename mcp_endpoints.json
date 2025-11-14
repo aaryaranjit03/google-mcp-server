@@ -1,0 +1,19 @@
+{
+  "mcp_services": {
+    "demo_info": {
+      "name": "demo_info",
+      "url": "https://httpbin.org/json",
+      "description": "Demo JSON endpoint",
+      "ttl_seconds": 300,
+      "cache": true
+    },
+
+    "slow_demo": {
+      "name": "slow_demo",
+      "url": "https://httpbin.org/delay/10",
+      "description": "Used to test the 5 second timeout",
+      "ttl_seconds": 300,
+      "cache": true
+    }
+  }
+}
