@@ -78,7 +78,8 @@ dependencies = [
     "uvicorn (==0.38.0)",
     "watchdog (==6.0.0)",
     "fastapi (>=0.121.1,<0.122.0)",
-    "redis (>=7.0.1,<8.0.0)"
+    "redis (>=7.0.1,<8.0.0)",
+    "google-genai (>=1.50.1,<2.0.0)"
 ]
 
 

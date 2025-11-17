@@ -94,7 +94,6 @@ class GoogleMCPClient:
         try:
             result = await self.session.call_tool(
                 "list_calendar_events",
-                arguments={"max_results": 5, "days_ahead": 7}
             )
             
             for content in result.content:
